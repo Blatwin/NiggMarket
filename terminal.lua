@@ -1,6 +1,6 @@
 ﻿local files = {
     {path = "/lib/json.lua", link = "https://raw.githubusercontent.com/rxi/json.lua/master/json.lua"},
-    {path = "/lib/serialization.lua", link = "https://raw.githubusercontent.com/MightyPirates/OpenComputers/master-MC1.12/src/main/resources/assets/opencomputers/loot/openos/lib/serialization.lua"}
+    {path = "/lib/serialization.lua", link = "https://raw.githubusercontent.com/MightyPirates/OpenComputers/master-MC1.7.10/src/main/resources/assets/opencomputers/loot/openos/lib/serialization.lua"}
 }
 
 if not filesystem.exists("/lib") then
@@ -19,21 +19,21 @@ local server = "Default"
 local version, port = "modem", 1414
 local serverAddress = "424ec2da-e361-416f-b970-eec6f42a4cae"
 
-local priceLottery = 5
-local superPrize = 100
-local freeFoodCount = 5
+local priceLottery = 150
+local superPrize = 10000
+local freeFoodCount = 16
 
 local INFO = [[
-[0x68f029]1. [0xffffff]Что это такое? — Это магазин/обменник.
-[0x68f029]2. [0xffffff]Что такое BIBON?  — это вымышленная валюта. Это не серверная валюта!
-[0x68f029]3. [0xffffff]Как обменять товар на бибоны? — нужно выбрать товар  и выбрать режим поиска предметов.
-[0x68f029]4. [0xffffff]Как купить товар? — выбираете товар, набираете кол-во товара, и товар будет добавлен в сундук слева. Если бибонов недостаточно - товар нельзя купить.
-[0x68f029]5. [0xffffff]Как обменять руду? — Выбираете режим поиска предметов, и руда будет обменена на слитки.
-[0x68f029]6. [0xffffff]Что за режим поиска предметов? — нажимая на "1 слот" магазин ищет предмет в 1 слоте вашего сундука слева. Внимание! "Весь инвентарь" — означает что ВЕСЬ ваш сундук будет просканирован. Любой предмет выбранный вами(Допустим — алмаз) будет продан из всех слотов!
-[0x68f029]7. [0xffffff]Что будет, если я продам зачарованный(переименованный, заряженный, и т.д) меч/гравик/нано-трусы? — цена таких вещей равняется стандартному предмету. Будьте внимательны!
+[0x68f029]1. [0xffffff]Что это такое? Ответ — Это магазин/обменник. Как угодно.
+[0x68f029]2. [0xffffff]Что такое R.I.P? Ответ — это вымышленная валюта. Это не серверная валюта!
+[0x68f029]3. [0xffffff]Как обменять товар на рипы? Ответ — нужно выбрать товар  и выбрать режим поиска предметов.
+[0x68f029]4. [0xffffff]Как купить товар? Ответ — выбираете товар, набираете кол-во товара, и товар будет добавлен в ваш инвентарь. Если денег недостаточно - товар нельзя купить.
+[0x68f029]5. [0xffffff]Как обменять руду? Выбираете режим поиска предметов, и руда будет обменена на слитки.
+[0x68f029]6. [0xffffff]Что за режим поиска предметов? Ответ — нажимая на "1 слот" магазин ищет предмет в 1 слоте вашего инвентаря. Внимание! "Весь инвентарь" — означает что ВЕСЬ ваш инвентарь будет просканирован. Любой предмет выбранный вами(Допустим — алмаз) будет продан из всех слотов!
+[0x68f029]7. [0xffffff]Что будет, если я продам зачарованный(переименованный, заряженный, и т.д) меч/гравик/нано-трусы? Ответ — цена таких вещей равняется стандартному предмету. Будьте внимательны!
 ]]
 
-local transposer, me, selector, tmpfs, modem = proxy("transposer"), proxy("me_interface"), proxy("openperipheral_selector"), component.proxy(computer.tmpAddress())
+local pim, me, selector, tmpfs, modem = proxy("pim"), proxy("me_interface"), proxy("openperipheral_selector"), component.proxy(computer.tmpAddress())
 local json, serialization = require("json"), require("serialization")
 local terminal = computer.address()
 local key
@@ -61,7 +61,7 @@ local color = {
     red = 0xff0000
 }
 
-local radarGeometry = {
+local pimGeometry = {
     x = 23,
     y = 7,
 
@@ -157,14 +157,14 @@ local function clickDrawButton(button)
     drawButton(button, false)
 end
 
-local function drawRadar()
-    for str = 1, #radarGeometry do 
-        set(radarGeometry.x, radarGeometry.y + str, radarGeometry[str], color.background, color.pim)
+local function drawPim()
+    for str = 1, #pimGeometry do 
+        set(pimGeometry.x, pimGeometry.y + str, pimGeometry[str], color.background, color.pim)
     end
 end
 
 local function discord()
-    setColorText(6, 18, "[0x303030]По любым проблемам пишите в Discord: [0x337d11]AndAlex#0220 или пт на пиво#3167", color.background)
+    setColorText(6, 18, "[0x303030]По любым проблемам пишите в Discord: [0x337d11]BrightYC#0604", color.background)
 end
 
 local function outOfService(reason)
@@ -172,7 +172,7 @@ local function outOfService(reason)
     clear()
     set(8, 7, "Магазин не работает, приносим свои извинения за", color.background, color.lime)
     set(18, 8, "предоставленные неудобства", color.background, color.lime)
-    set(23, 13, "GG!", color.background, color.red)
+    set(23, 13, "OUT OF SERVICE!", color.background, color.red)
     if reason then
         set(nil, 16, "Причина: " .. reason, color.background, color.gray)
     end
@@ -293,7 +293,7 @@ local function encodeString(str)
 end
 
 local function downloadItems()
-    local data = request("https://raw.githubusercontent.com/Blatwin/NiggMarket/master/items.lua")
+    local data = request("https://raw.githubusercontent.com/BrightYC/RipMarket/master/items.lua")
     local chunk, err = load("return " .. data, "=items.lua", "t")
     if not chunk then 
         error("Неправильно сконфигурирован файл вещей! " .. err)
@@ -363,7 +363,7 @@ local function requestWithData(log, data, forceKey)
 end
 
 local function checkPlayer(reason)
-    local name = radar.getPlayers([distance:3])
+    local name = pim.getInventoryName()
 
     if name ~= session.name then
         if name ~= "pim" then 
@@ -403,12 +403,12 @@ local function setItemsMarket()
 end
 
 local function pushItem(slot, count)
-    local item = transposer.getStackInSlot(slot)
+    local item = pim.getStackInSlot(slot)
 
     if item then
         local itemToLog = "id=" .. item.id .. "|display_name=" .. item.display_name
         if checkPlayer("Был обнаружен игрок при попытке забрать предмет: ".. itemToLog) then
-            if transposer.pushItem(me_side, slot, count) > 0 then
+            if pim.pushItem(me_side, slot, count) > 0 then
                 log("Забираю предмет(" .. count .. " шт): " .. itemToLog, session.name)
                 return true
             else
@@ -422,19 +422,19 @@ end
 
 local function findSlot()
     for slot = 1, 36 do 
-        local success, err = transposer.getStackInSlot(slot)
+        local success, err = pim.getStackInSlot(slot)
 
         if not success and not err then
             return slot
         elseif err then
-            log("Произошла ошибка", session.name)
+            log("Игрок встал с PIM при поиске слота", session.name)
             return false, err
         end
     end
 end
 
 local function scanSlot(slot, raws, nbt_hash)
-    local item = transposer.getStackInSlot(slot)
+    local item = pim.getStackInSlot(slot)
 
     if item then
         for raw = 1, #raws do
@@ -527,7 +527,7 @@ local function rawInsert(fingerprint, count)
             alert({"Освободите любой слот"})
             slot = findSlot()
         else
-            return 0, "Предмет не выдан, не было свободных слотов, " .. session.name .. " встал с негра"
+            return 0, "Предмет не выдан, не было свободных слотов, " .. session.name .. " встал с PIM"
         end
     end
     local success, returnValue = pcall(me.exportItem, fingerprint, pim_side, count, slot)
@@ -1434,8 +1434,8 @@ function login(name)
 
         if active then
             clear()
-            setColorText(18, 2, "[0xffffff]Приветствуем в [0x68f029]NiggMarket[0xffffff]!", color.background)
-            setColorText(17, 5, "[0xffffff]Встаньте на [0x46c8e3]транспозер[0xffffff], чтобы войти", color.background)
+            setColorText(18, 2, "[0xffffff]Приветствуем в [0x68f029]РипМаркете[0xffffff]!", color.background)
+            setColorText(17, 5, "[0xffffff]Встаньте на [0x46c8e3]PIM[0xffffff], чтобы войти", color.background)
             discord()
             drawPim()
         end
