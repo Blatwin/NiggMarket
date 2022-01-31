@@ -1,6 +1,6 @@
-local component = require("component")
+﻿local component = require("component")
 local internet = component.internet
-local export, import = component.proxy("d8465ded-416c-489e-be3b-4e0d2a5a6804"), component.proxy("93caa913-9f38-4e30-a8c9-882256427897")
+local export, import = component.proxy("4ed5c14f-ed9e-481e-97a3-62215bd989f9"), component.proxy("a1f404d4-44ac-4571-9aa6-1aa063a258cb")
 local importSide = "SOUTH"
 local items, oldSlot
 
@@ -83,7 +83,7 @@ local function insert(fingerprint, count)
     end
 end
 
-local data = request("https://raw.githubusercontent.com/BrightYC/RipMarket/master/items.lua")
+local data = request("https://raw.githubusercontent.com/Blatwin/NiggMarket/master/items.lua")
 local chunk, err = load("return " .. data, "=items.lua", "t")
 if not chunk then 
     error("Неправильно сконфигурирован файл вещей! " .. err)
