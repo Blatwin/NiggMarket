@@ -369,10 +369,9 @@ local function checkPlayer(reason)
         if reason then
             log(reason, session.name)
         end
-
         login()
     end
-else
+	else
         return true
     end
 end
