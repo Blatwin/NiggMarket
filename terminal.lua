@@ -363,7 +363,7 @@ local function requestWithData(log, data, forceKey)
 end
 
 local function checkPlayer(reason)
-    local name = radar.getPlayers([distance:3])
+    local name = radar.getPlayers(3)
 
     if name ~= session.name then
         if reason then
